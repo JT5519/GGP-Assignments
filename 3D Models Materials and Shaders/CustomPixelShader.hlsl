@@ -1,0 +1,47 @@
+//constant buffer definition
+cbuffer ExternalData : register(b0)
+{
+    float4 colorTint;
+}
+
+// Struct representing the data we expect to receive from earlier pipeline stages
+// - Should match the output of our corresponding vertex shader
+// - The name of the struct itself is unimportant
+// - The variable names don't have to match other shaders (just the semantics)
+// - Each variable must have a semantic, which defines its usage
+struct VertexToPixel
+{
+	// Data type
+	//  |
+	//  |   Name          Semantic
+	//  |    |                |
+	//  v    v                v
+    float4 screenPosition : SV_POSITION; // XYZW position (System Value Position)
+    float2 uv : TEXCOORD; // UV
+};
+
+float random(float2 s)
+{
+    return frac(atan(dot(s, float2(27.9898, 32.233))) * 39198.5453123);
+}
+
+// --------------------------------------------------------
+// The entry point (main method) for our pixel shader
+// 
+// - Input is the data coming down the pipeline (defined by the struct)
+// - Output is a single color (float4)
+// - Has a special semantic (SV_TARGET), which means 
+//    "put the output of this into the current render target"
+// - Named "main" because that's the default the shader compiler looks for
+// --------------------------------------------------------
+float4 main(VertexToPixel input) : SV_TARGET
+{
+	// Just return the input color
+	// - This color (like most values passing through the rasterizer) is 
+	//   interpolated for each pixel between the corresponding vertices 
+	//   of the triangle we're rendering
+    
+    float pseudoZ = cross(float3(input.uv.x, 0, 0), float3(0, input.uv.y, 0)).z; 
+    return float4(random(input.uv.x), random(input.uv.y), random(pseudoZ), 1); //Behold the noise! 
+}
+
