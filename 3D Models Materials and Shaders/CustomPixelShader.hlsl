@@ -42,6 +42,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 	//   of the triangle we're rendering
     
     float pseudoZ = cross(float3(input.uv.x, 0, 0), float3(0, input.uv.y, 0)).z; 
-    return float4(random(input.uv.x), random(input.uv.y), random(pseudoZ), 1); //Behold the noise! 
+    return float4(random(input.uv.x), random(input.uv.y), random(pseudoZ), 1)*colorTint; //Behold the noise! (Better without colorTint)
 }
 
